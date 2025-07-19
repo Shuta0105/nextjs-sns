@@ -7,7 +7,7 @@ import UserFollow from "@/components/component/UserFollow";
 import { auth } from "@clerk/nextjs/server";
 
 interface ProfilePageProps {
-  params: { username: string };
+  params: { username: Promise<string> };
 }
 
 const ProfilePage = async ({ params }: ProfilePageProps) => {
