@@ -25,6 +25,10 @@ const ProfilePage = async ({ params }: { params: { username: string } }) => {
     },
   });
 
+  if(!profileUser) {
+    return
+  }
+
   const followingRecord = await prisma.follow.findFirst({
     where: {
       followerId: userId,
@@ -41,36 +45,36 @@ const ProfilePage = async ({ params }: { params: { username: string } }) => {
         <div className="flex items-center gap-12">
           <img src={profileUser?.image ?? ""} alt="" className="w-30 h-30" />
           <div className="flex flex-col gap-2">
-            <span className="font-extrabold text-4xl">{profileUser?.name}</span>
-            <span className="text-gray-500">{`@${profileUser?.name}`}</span>
+            <span className="font-extrabold text-4xl">{profileUser.name}</span>
+            <span className="text-gray-500">{`@${profileUser.name}`}</span>
           </div>
         </div>
         <div className="flex justify-start items-center gap-8">
           <div className="flex flex-col items-center gap-2">
             <span className="font-medium text-2xl">
-              {profileUser?.posts.length}
+              {profileUser.posts.length}
             </span>
             <span className="text-gray-600">Posts</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <span className="font-medium text-2xl">
-              {profileUser?.followers.length}
+              {profileUser.followers.length}
             </span>
             <span className="text-gray-600">Followers</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <span className="font-medium text-2xl">
-              {profileUser?.following.length}
+              {profileUser.following.length}
             </span>
             <span className="text-gray-600">Following</span>
           </div>
         </div>
-        <PostList profileUserId={profileUser?.id!} />
+        <PostList profileUserId={profileUser.id} />
       </div>
 
       <div className="flex flex-col gap-4">
         <UserFollow
-          profileUserId={profileUser?.id!}
+          profileUserId={profileUser.id}
           isFollowing={isFollowing}
           isOwnProfile={isOwnProfile}
         />
