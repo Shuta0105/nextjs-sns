@@ -6,11 +6,7 @@ import PostList from "@/components/component/PostList";
 import UserFollow from "@/components/component/UserFollow";
 import { auth } from "@clerk/nextjs/server";
 
-interface ProfilePageProps {
-  params: { username: string };
-}
-
-const ProfilePage = async ({ params }: ProfilePageProps) => {
+const ProfilePage = async ({ params }: { params: { username: string } }) => {
   const { username } = params;
   const { userId } = await auth();
 
@@ -29,8 +25,8 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
     },
   });
 
-  if(!profileUser) {
-    return
+  if (!profileUser) {
+    return;
   }
 
   const followingRecord = await prisma.follow.findFirst({
@@ -42,7 +38,7 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
 
   const isFollowing = followingRecord ? true : false;
   const isOwnProfile = userId === profileUser?.id ? true : false;
-  
+
   return (
     <div className="flex justify-around p-16">
       <div className="flex flex-col gap-8 w-2/3">
