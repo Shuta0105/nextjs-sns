@@ -6,7 +6,11 @@ import PostList from "@/components/component/PostList";
 import UserFollow from "@/components/component/UserFollow";
 import { auth } from "@clerk/nextjs/server";
 
-const ProfilePage = async ({ params }: { params: { username: string } }) => {
+interface ProfilePageProps {
+  params: { username: string };
+}
+
+const ProfilePage = async ({ params }: ProfilePageProps) => {
   const { username } = await params;
   const { userId } = await auth();
 
