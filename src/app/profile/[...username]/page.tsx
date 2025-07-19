@@ -7,11 +7,11 @@ import UserFollow from "@/components/component/UserFollow";
 import { auth } from "@clerk/nextjs/server";
 
 interface ProfilePageProps {
-  params: { username: Promise<string> };
+  params: { username: string };
 }
 
 const ProfilePage = async ({ params }: ProfilePageProps) => {
-  const { username } = await params;
+  const { username } = params;
   const { userId } = await auth();
 
   if (!userId) {
