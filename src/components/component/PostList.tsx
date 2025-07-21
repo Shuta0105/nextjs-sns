@@ -6,7 +6,7 @@ import { fetchPosts } from "@/lib/post";
 import prisma from "@/lib/prisma";
 
 type PostListProps = {
-  profileUserId: string;
+  profileUserId?: string;
 };
 
 const PostList = async ({ profileUserId }: PostListProps) => {
