@@ -13,6 +13,7 @@ export async function fetchPosts(userId: string, followingId?: string[]) {
     include: {
       author: true,
       likes: true,
+      comments: true,
     },
     orderBy: {
       createdAt: "desc",

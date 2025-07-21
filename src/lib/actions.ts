@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { PostType } from "@/types/type";
+import { PostType, ReplyType } from "@/types/type";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -64,7 +64,7 @@ export async function addPostAction(
   }
 }
 
-export async function addLikeAction(post: PostType) {
+export async function addPostLikeAction(post: PostType) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -92,6 +92,44 @@ export async function addLikeAction(post: PostType) {
           userId_postId: {
             userId: userId,
             postId: post.id,
+          },
+        },
+      });
+      revalidatePath("/");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function addReplyLikeAction(reply: ReplyType) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return;
+    }
+
+    const existingLike = await prisma.commentLike.findFirst({
+      where: {
+        userId: userId,
+        commentId: reply.id,
+      },
+    });
+
+    if (!existingLike) {
+      await prisma.commentLike.create({
+        data: {
+          userId: userId,
+          commentId: reply.id,
+        },
+      });
+      revalidatePath("/");
+    } else {
+      await prisma.commentLike.delete({
+        where: {
+          userId_commentId: {
+            userId: userId,
+            commentId: reply.id,
           },
         },
       });

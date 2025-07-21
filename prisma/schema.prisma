@@ -22,6 +22,7 @@ model User {
   posts     Post[]
   comments  Comment[]
   likes     PostLike[]
+  commentLikes CommentLike[]    // ← 追加
   following Follow[]   @relation("following")
   followers Follow[]   @relation("followers")
   createdAt DateTime   @default(now())
@@ -49,6 +50,13 @@ model Comment {
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  likes     CommentLike[]  // ここを追加
+
+  // 追加: コメントに対するコメント (スレッド化)
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  parentId String?
+  replies  Comment[] @relation("CommentReplies")
 }
 
 model PostLike {
@@ -60,6 +68,17 @@ model PostLike {
   createdAt DateTime @default(now())
 
   @@unique([userId, postId]) // 同じ投稿に同じユーザーが複数Likeできないよう制御
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, commentId]) // 同じコメントに同じユーザーが複数Likeできないよう制御
 }
 
 model Follow {

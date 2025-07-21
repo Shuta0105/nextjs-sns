@@ -7,8 +7,8 @@ import {
   faHeart,
   faShareNodes,
 } from "@fortawesome/free-solid-svg-icons";
-import { addPostLikeAction } from "@/lib/actions";
-import { PostType, ReplyType } from "@/types/type";
+import { addReplyLikeAction } from "@/lib/actions";
+import { ReplyType } from "@/types/type";
 import { useAuth } from "@clerk/nextjs";
 
 interface LikeState {
@@ -16,24 +16,22 @@ interface LikeState {
   isLiked: boolean;
 }
 
-type PostInteractionProps = {
-  post: PostType;
+type ReplyInteractionProps = {
+  reply: ReplyType;
 };
 
-const PostInteraction = ({ post }: PostInteractionProps) => {
+const ReplyInteraction = ({ reply }: ReplyInteractionProps) => {
   const { userId } = useAuth();
 
   const [optimisticLike, addOptimisticLike] = useOptimistic<LikeState, void>(
     {
-      likeCount: post.likes.length,
+      likeCount: reply.likes.length,
       isLiked: userId
-        ? post.likes.some((like) => like.userId === userId)
+        ? reply.likes.some((like) => like.userId === userId)
         : false,
     },
     (state) => ({
-      likeCount: state.isLiked
-        ? state.likeCount - 1
-        : state.likeCount + 1,
+      likeCount: state.isLiked ? state.likeCount - 1 : state.likeCount + 1,
       isLiked: !state.isLiked,
     })
   );
@@ -41,7 +39,7 @@ const PostInteraction = ({ post }: PostInteractionProps) => {
   const handleLike = async () => {
     try {
       addOptimisticLike();
-      await addPostLikeAction(post);
+      await addReplyLikeAction(reply);
     } catch (err) {
       console.log(err);
     }
@@ -50,14 +48,21 @@ const PostInteraction = ({ post }: PostInteractionProps) => {
   return (
     <form action={handleLike} className="flex items-center gap-2">
       <button>
-        <FontAwesomeIcon icon={faHeart} className={`${optimisticLike.isLiked ? "text-red-500" : "text-gray-400"}`} />
+        <FontAwesomeIcon
+          icon={faHeart}
+          className={`${
+            optimisticLike.isLiked ? "text-red-500" : "text-gray-400"
+          }`}
+        />
       </button>
       <span>{optimisticLike.likeCount}</span>
-      <FontAwesomeIcon icon={faComment} />
-      <span>{post.comments.length}</span>
+      <button className="space-x-2">
+        <FontAwesomeIcon icon={faComment} />
+        <span>{reply.replies.length}</span>
+      </button>
       <FontAwesomeIcon icon={faShareNodes} className="ml-2" />
     </form>
   );
 };
 
-export default PostInteraction;
+export default ReplyInteraction;
