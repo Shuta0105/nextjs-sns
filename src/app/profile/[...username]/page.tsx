@@ -6,15 +6,12 @@ import PostList from "@/components/component/PostList";
 import UserFollow from "@/components/component/UserFollow";
 import { auth } from "@clerk/nextjs/server";
 
-type PageProps = {
-   params: { username: string[] };
-};
-
-
-const ProfilePage = async ({ params }: PageProps) => {
-  const { username } = params;
+const ProfilePage = async (props: {
+  params: Promise<{ username: string }>;
+}) => {
+  const resolvedParams = await props.params;
+  const username = resolvedParams.username;
   const { userId } = await auth();
-
   if (!userId) {
     return;
   }
