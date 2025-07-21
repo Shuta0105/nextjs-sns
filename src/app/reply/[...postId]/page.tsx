@@ -9,8 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React from "react";
 
-const ReplyPage = async ({ params }: { params: { postId: string } }) => {
-  const { postId } = params;
+const ReplyPage = async (props: { params: Promise<{ postId: string }> }) => {
+  const resolvedParams = await props.params;
+  const postId = resolvedParams.postId;
 
   const post = await prisma.post.findFirst({
     where: {
