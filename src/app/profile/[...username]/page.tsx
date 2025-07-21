@@ -7,7 +7,7 @@ import UserFollow from "@/components/component/UserFollow";
 import { auth } from "@clerk/nextjs/server";
 
 type PageProps = {
-  params: { [key: string]: string };
+   params: { username: string[] };
 };
 
 
